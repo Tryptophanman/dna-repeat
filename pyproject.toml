@@ -1,0 +1,20 @@
+[project]
+name = "dna-repeat"
+version = "0.1.0"
+description = "CLI app that finds repeats in a DNA sequence"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "biopython>=1.85",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]
+
+[project.scripts]
+dna-repeat = "dna_repeat.cli:main"
