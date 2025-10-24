@@ -5,9 +5,9 @@ See also: [README.md](README.md)
 All notable changes to this project will be documented in this file.
 
 
-## 0.2.0 - Unreleased
+## [Unreleased]
 
-## 0.1.0 - 2025-10-21
+## [0.1.0] - 2025-10-21
 - Initial features:
   - Parse sequences from FASTA via Biopython
   - Output results to CSV or stdout
@@ -19,4 +19,3 @@ All notable changes to this project will be documented in this file.
   - $O(n^2)$ time complexity; slow for large inputs
   - Inverted repeats not detected
   - Outputs k-mer strings but not positions
-
