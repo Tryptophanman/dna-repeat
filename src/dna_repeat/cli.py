@@ -7,7 +7,7 @@ import csv
 from dna_repeat.core import read_fasta, find_repeats
 from pathlib import Path
 
-VERSION: str = 'v0.1.1'     # cross-check with pyproject.toml
+VERSION: str = 'v0.2.0'     # cross-check with pyproject.toml
 
 def init_argparser() -> argparse.ArgumentParser:
     '''Initializes argument parser for CLI'''
