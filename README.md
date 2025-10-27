@@ -1,9 +1,9 @@
-# dna-repeat v0.1.1
+# dna-repeat
 
 ## Description
 This simple CLI identifies repetitive elements in DNA sequences from a FASTA file. The presence of such repeats poses significant challenges in traditional gene synthesis, as it can cause L and m oligonucleotides to misanneal, resulting in incorrect assembly products. Identifying these elements beforehand can greatly aid in optimizing oligo design and assembly steps, thereby increasing the likelihood of successful synthesis.
 
-In its current form (v0.1.0), the tool reports the record ID, the repeats as a pair of k-mer strings, and the number of mismatches between them. Results are written in CSV format to either stdout (i.e. the terminal) or to an output.csv file.
+In its current form, the tool reports the record ID, the repeats as a pair of k-mer strings, and the number of mismatches between them. Results are written in CSV format to either stdout (i.e. the terminal) or to an output.csv file.
 
 ## Dependencies
 - Linux/WSL2
