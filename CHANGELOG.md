@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.1] - 2025-10-27
+- fix: arguments/flags cleaned up a bit. -o / --output flag added for output directory; omitting means output results to stdout.
+
 ## [0.1.0] - 2025-10-21
 - Initial features:
   - Parse sequences from FASTA via Biopython

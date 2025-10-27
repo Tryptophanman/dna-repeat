@@ -20,35 +20,35 @@ uv pip install -e .
 
 ## Usage
 ```
-dna-repeat [-l/--length INT] [-m/--mismatches INT] [-f/--file] INPUT.fasta [OUTPUT_DIR]
+dna-repeat [-k/--length INT] [-m/--mismatches INT] [-o/--output DIR] INPUT.fasta
 ```
 
 - INPUT.fasta – input FASTA / Multi-FASTA filepath
-- OUTPUT_DIR (optional) – directory to write output.csv into (default: current directory)
-- `-l`/`--length` – repeat (k-mer) length (default: 20; allowed range 4–30)
+- `-o`/`--output` – write results to output.csv file, into the specifed directory (otherwise, write to terminal (stdout))
+- `-k`/`--length` – repeat (k-mer) length (default: 20; allowed range 4–30)
 - `-m`/`--mismatches` – allowed mismatches (default: 0; must be ≤ length/2)
-- `-f`/`--file` – write CSV to OUTPUT_DIR/output.csv (otherwise, write to terminal (stdout))
 
 Examples:
 - Write results to output.csv file in ./data:
 ```bash
-$ dna-repeat -l 23 -m 3 -f data/example.fas data
+$ dna-repeat -k 23 -m 3 -o data data/example.fas
 ```
 
-- remove `-f` to write the results to the terminal (stdout):
+- remove `-o data` to write the results to stdout:
 ```bash
-$ dna-repeat -l 23 -m 3 data/example.fas
+$ dna-repeat -k 23 -m 3 data/example.fas
 ```
 
 - Output to terminal (detailed example)
 ```bash
-$ dna-repeat -l 23 -m 5 fasfiles/seqs.fasta
+$ dna-repeat -k 14 -m 2 data/example.fas
 record_id,seq1,seq2,mismatches
-gi|304112|gb|L10209.1|ATHTAGIA,GCAAAAGTCGTTTGAGAAAGAAG,GCAACAGTCGTCTCAGCAAGCAG,5
-gi|166595|gb|M55553.1|ATHAGL5A,GAAGATAGGGAGAGGGAAGATAG,GAAGATAGAGATAAAGAGGATAG,5
-gi|166595|gb|M55553.1|ATHAGL5A,AAGATAGGGAGAGGGAAGATAGA,AAGATAGAGATAAAGAGGATAGA,5
-gi|166595|gb|M55553.1|ATHAGL5A,AGATAGGGAGAGGGAAGATAGAG,AGATAGAGATAAAGAGGATAGAG,5
-gi|166595|gb|M55553.1|ATHAGL5A,GATAGGGAGAGGGAAGATAGAGA,GATAGAGATAAAGAGGATAGAGA,5
+gi|304112|gb|L10209.1|ATHTAGIA,CAATGGAGATGATG,CAAGGCAGATGATG,2
+gi|304112|gb|L10209.1|ATHTAGIA,TGATGAGCTCTTCT,TGATGAGCTCTTCT,0
+gi|304112|gb|L10209.1|ATHTAGIA,CTCTTCTTCTTCTA,TTCTTCTTCTACTA,2
+gi|304112|gb|L10209.1|ATHTAGIA,TCTTCTTCTTCTAC,TCTTCTTCTACTAC,1
+gi|304112|gb|L10209.1|ATHTAGIA,CTTCTTCTTCTACT,CTTCTTCTACTACT,1
+gi|304112|gb|L10209.1|ATHTAGIA,TTCTTCTTCTACTA,TTCTTCTACTACTC,2
 ```
 
 ## Future Development
