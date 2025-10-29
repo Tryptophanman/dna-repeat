@@ -1,13 +1,14 @@
 # src/dna_repeat/cli.py
-    # Top-level functions for dna-repeat CLI
+# Top-level functions for dna-repeat CLI
 
 import sys
 import argparse
-import csv
-from dna_repeat.core import read_fasta, find_repeats
+# import csv
+from dna_repeat.core import iter_fasta, find_repeats
 from pathlib import Path
+import pandas as pd
 
-VERSION: str = 'v0.2.0'     # cross-check with pyproject.toml
+VERSION = 'v0.2.0'     # cross-check with pyproject.toml
 
 def init_argparser() -> argparse.ArgumentParser:
     '''Initializes argument parser for CLI'''
@@ -42,17 +43,22 @@ def main(argv: str | None = None) -> int:
         print('m must be <= kmer_length / 2', file=sys.stderr)
         return 1       
 
-    writer = csv.writer(open(output_filepath, 'w', newline='') if output_filepath else sys.stdout)
-    writer.writerow(['record_id', 'seq1', 'seq2', 'mismatches'])
+    results = []
 
-    for rec_id, seq in read_fasta(input_filepath):
-        hits = find_repeats(seq, kmer_length, allowed_mismatches)
-        if hits:
-            for seq_a, seq_b, mis in hits:
-                writer.writerow([rec_id, seq_a, seq_b, mis])
+    for rec_id, seq in iter_fasta(input_filepath):
+        repeats: list = find_repeats(
+            rec_id=rec_id,
+            seq=seq,
+            kmer_length=kmer_length,
+            allowed_mismatches=allowed_mismatches,
+        )
+        if repeats:
+            results.extend(repeats)
+    if results:
+        df = pd.DataFrame(results)
+    df.to_csv(sys.stdout if output_filepath is None else output_filepath, index=False)
     return 0
 
 
 if __name__ == "__main__":
     sys.exit(main())
-
