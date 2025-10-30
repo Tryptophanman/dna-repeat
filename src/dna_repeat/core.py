@@ -5,6 +5,7 @@ from Bio import SeqIO
 from pathlib import Path
 from typing import Iterator
 from dataclasses import dataclass
+from dna_repeat.constants import COMPLEMENT
 
 @dataclass
 class RepeatHit:
@@ -48,3 +49,6 @@ def find_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: in
                     kmer_length = kmer_length
                     ))
     return hits
+
+def reverse_complement(s: str) -> str:
+    return s.translate(COMPLEMENT)[::-1]
