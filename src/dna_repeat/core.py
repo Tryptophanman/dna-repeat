@@ -11,8 +11,8 @@ class RepeatHit:
     '''Stores information for a found repeat'''
     record_id: str
     query_start: int
-    subject_start: int
     query_end: int
+    subject_start: int
     subject_end: int
     query_seq: str
     subject_seq: str
@@ -38,10 +38,10 @@ def find_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: in
             if mismatches <= allowed_mismatches:
                 hits.append(RepeatHit(
                     record_id = rec_id,
-                    query_start = i,
-                    subject_start = j,
-                    query_end = i + kmer_length - 1,
-                    subject_end = j + kmer_length -1,
+                    query_start = i + 1,        # '+ 1' = convert to 1-based index for positions (DNA)
+                    query_end = i + kmer_length,
+                    subject_start = j + 1,
+                    subject_end = j + kmer_length,
                     query_seq = a,
                     subject_seq = b,
                     mismatches = mismatches,

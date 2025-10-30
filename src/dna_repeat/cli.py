@@ -4,7 +4,7 @@
 import sys
 import argparse
 # import csv
-from dna_repeat.core import iter_fasta, find_repeats
+from dna_repeat.core import iter_fasta, find_repeats, RepeatHit
 from pathlib import Path
 import pandas as pd
 
@@ -46,7 +46,7 @@ def main(argv: str | None = None) -> int:
     results = []
 
     for rec_id, seq in iter_fasta(input_filepath):
-        repeats: list = find_repeats(
+        repeats: list[RepeatHit] = find_repeats(
             rec_id=rec_id,
             seq=seq,
             kmer_length=kmer_length,
