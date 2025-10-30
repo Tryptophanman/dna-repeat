@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 
 ## [Unreleased]
+- A number of fields (columns) have been added to the results:
+  - record_id: name of the sequence
+  - query_start: start position of the first repeat
+  - subject_start: start position of the second repeat
+  - query_end: end position of the first repeat
+  - subject_end: end position of the second repeat
+  - query_seq: first repeat sequence
+  - subject_seq: second repeat sequence
+  - mismatches: number of mismatches between the repeats
+  - kmer_length: length of the repeat in bp
 
 ## [0.2.0] - 2025-10-27
 - fix: arguments/flags cleaned up a bit. -o / --output flag added for output directory; omitting means output results to stdout. Replaced -l with -k for consistency (k-mer length)
