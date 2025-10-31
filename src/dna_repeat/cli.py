@@ -4,15 +4,14 @@
 import sys
 import argparse
 # import csv
+from dna_repeat import __version__
 from dna_repeat.core import iter_fasta, find_repeats, RepeatHit
 from pathlib import Path
 import pandas as pd
 
-VERSION = 'v0.2.0'     # cross-check with pyproject.toml
-
 def init_argparser() -> argparse.ArgumentParser:
     '''Initializes argument parser for CLI'''
-    parser = argparse.ArgumentParser(prog='dna-repeat', description=f'dna-repeat {VERSION} - Finds repeats in a DNA sequence')
+    parser = argparse.ArgumentParser(prog='dna-repeat', description=f'dna-repeat {__version__} - Finds repeats in a DNA sequence')
     parser.add_argument("input_filepath", help='filepath to input file (FASTA)')
     parser.add_argument("-o", "--output", help='desired directory for output file (output.csv). Default: cwd', nargs='?', const='.', default=None, dest='output_directory')
     parser.add_argument("-k", "--length", help='repeat length in bp (min 4, max 30)', type=int, default=20, dest='kmer_length')
