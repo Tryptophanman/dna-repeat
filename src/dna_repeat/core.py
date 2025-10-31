@@ -19,6 +19,7 @@ class RepeatHit:
     subject_seq: str
     mismatches: int
     kmer_length: int
+    orientation: str
 
 def iter_fasta(input_filepath: Path) -> Iterator[tuple[str, str]]:
     '''Generator that yields (record ID, sequence) tuples from a FASTA file'''
@@ -46,7 +47,31 @@ def find_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: in
                     query_seq = a,
                     subject_seq = b,
                     mismatches = mismatches,
-                    kmer_length = kmer_length
+                    kmer_length = kmer_length,
+                    orientation = 'direct'
+                    ))
+    return hits
+
+def find_invert_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: int) -> list[RepeatHit]:
+    seq_rc = reverse_complement(seq)
+    hits: list[RepeatHit] = []
+    for i in range(len(seq) - kmer_length + 1):
+        a = seq[i:kmer_length + i]
+        for j in range(i, len(seq) - kmer_length + 1):
+            b = seq_rc[j:kmer_length + j]
+            mismatches = hamming_distance(a, b)
+            if mismatches <= allowed_mismatches:
+                hits.append(RepeatHit(
+                    record_id = rec_id,
+                    query_start = i + 1,
+                    query_end = i + kmer_length,
+                    subject_start = len(seq) - j + kmer_length + 1,
+                    subject_end = len(seq) - j,
+                    query_seq = a,
+                    subject_seq = reverse_complement(b),
+                    mismatches = mismatches,
+                    kmer_length = kmer_length,
+                    orientation = 'inverted'
                     ))
     return hits
 
