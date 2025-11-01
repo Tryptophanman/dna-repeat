@@ -65,7 +65,7 @@ def find_invert_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatc
                     record_id = rec_id,
                     query_start = i + 1,
                     query_end = i + kmer_length,
-                    subject_start = len(seq) - j + kmer_length + 1,
+                    subject_start = len(seq) - j - kmer_length + 1,
                     subject_end = len(seq) - j,
                     query_seq = a,
                     subject_seq = reverse_complement(b),
