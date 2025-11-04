@@ -5,7 +5,8 @@ import sys
 import argparse
 # import csv
 from dna_repeat import __version__
-from dna_repeat.core import iter_fasta, find_repeats, find_invert_repeats, RepeatHit
+from dna_repeat.core import iter_fasta, RepeatHit
+from dna_repeat.ai import find_repeats_2bit, find_invert_repeats_2bit
 from pathlib import Path
 import pandas as pd
 
@@ -53,7 +54,7 @@ def main(argv: str | None = None) -> int:
 
     for rec_id, seq in iter_fasta(input_filepath):
         if do_direct:
-            repeats: list[RepeatHit] = find_repeats(
+            repeats: list[RepeatHit] = find_repeats_2bit(
                 rec_id=rec_id,
                 seq=seq,
                 kmer_length=kmer_length,
@@ -62,7 +63,7 @@ def main(argv: str | None = None) -> int:
             if repeats:
                 results.extend(repeats)
         if do_inverted:
-            repeats: list[RepeatHit] = find_invert_repeats(
+            repeats: list[RepeatHit] = find_invert_repeats_2bit(
                 rec_id=rec_id,
                 seq=seq,
                 kmer_length=kmer_length,
@@ -76,7 +77,6 @@ def main(argv: str | None = None) -> int:
         df = pd.DataFrame(columns=list(RepeatHit.__dataclass_fields__.keys()))  # empty results
     df.to_csv(sys.stdout if output_filepath is None else output_filepath, index=False)
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

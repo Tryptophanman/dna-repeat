@@ -31,6 +31,9 @@ def hamming_distance(a: str, b: str) -> int:
     return sum(c1 != c2 for c1, c2 in zip(a, b))
 
 def find_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: int) -> list[RepeatHit]:
+    '''Find direct repeats by string slicing and nested loop'''
+    if len(seq) < kmer_length:
+        return []
     hits: list[RepeatHit] = []
     for i in range(len(seq) - kmer_length + 1):
         a = seq[i:kmer_length + i]
@@ -53,6 +56,9 @@ def find_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: in
     return hits
 
 def find_invert_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: int) -> list[RepeatHit]:
+    '''Find indirect repeats by string slicing and nested loop'''
+    if len(seq) < kmer_length:
+        return []
     seq_rc = reverse_complement(seq)
     hits: list[RepeatHit] = []
     for i in range(len(seq) - kmer_length + 1):
@@ -76,4 +82,5 @@ def find_invert_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatc
     return hits
 
 def reverse_complement(s: str) -> str:
-    return s.translate(COMPLEMENT)[::-1]
+    '''Get the reverse complement of a dna sequence (no wobbles)'''
+    return s.translate(COMPLEMENT)[::-1]                           
