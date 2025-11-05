@@ -1,11 +1,12 @@
 # src/dna_repeat/core.py
-    # Core functions
+# Core functions
 
 from Bio import SeqIO
 from pathlib import Path
 from typing import Iterator
 from dataclasses import dataclass
 from dna_repeat.constants import COMPLEMENT
+from dna_repeat.error import InvalidFASTAError
 
 @dataclass
 class RepeatHit:
@@ -23,7 +24,18 @@ class RepeatHit:
 
 def iter_fasta(input_filepath: Path) -> Iterator[tuple[str, str]]:
     '''Generator that yields (record ID, sequence) tuples from a FASTA file'''
-    for rec in SeqIO.parse(handle=input_filepath, format='fasta'):
+    records = SeqIO.parse(handle=input_filepath, format='fasta')
+
+    try:
+        first_record = next(records)
+    except StopIteration:
+        raise InvalidFASTAError(
+            message=f"FASTA file {input_filepath} contains no records and/or is not formatted correctly.",
+            details="StopIteration exception in core.py: iter_fasta()",
+        )
+
+    yield first_record.id, str(first_record.seq)
+    for rec in records:
         yield rec.id, str(rec.seq)
 
 def hamming_distance(a: str, b: str) -> int:

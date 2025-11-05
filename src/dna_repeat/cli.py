@@ -7,6 +7,7 @@ import argparse
 from dna_repeat import __version__
 from dna_repeat.core import iter_fasta, RepeatHit
 from dna_repeat.ai import find_repeats_2bit, find_invert_repeats_2bit
+from dna_repeat.error import InvalidFASTAError
 from pathlib import Path
 import pandas as pd
 
@@ -51,31 +52,51 @@ def main(argv: str | None = None) -> int:
         return 1       
 
     results = []
-
-    for rec_id, seq in iter_fasta(input_filepath):
-        if do_direct:
-            repeats: list[RepeatHit] = find_repeats_2bit(
-                rec_id=rec_id,
-                seq=seq,
-                kmer_length=kmer_length,
-                allowed_mismatches=allowed_mismatches,
-            )
-            if repeats:
-                results.extend(repeats)
-        if do_inverted:
-            repeats: list[RepeatHit] = find_invert_repeats_2bit(
-                rec_id=rec_id,
-                seq=seq,
-                kmer_length=kmer_length,
-                allowed_mismatches=allowed_mismatches,
-            )
-            if repeats:
-                results.extend(repeats)    
+    no_hits: list[str] = []
+    
+    try:
+        for rec_id, seq in iter_fasta(input_filepath):
+            hits_found = False
+            if do_direct:
+                repeats: list[RepeatHit] = find_repeats_2bit(
+                    rec_id=rec_id,
+                    seq=seq,
+                    kmer_length=kmer_length,
+                    allowed_mismatches=allowed_mismatches,
+                )
+                if repeats:
+                    results.extend(repeats)
+                    hits_found = True
+            if do_inverted:
+                repeats: list[RepeatHit] = find_invert_repeats_2bit(
+                    rec_id=rec_id,
+                    seq=seq,
+                    kmer_length=kmer_length,
+                    allowed_mismatches=allowed_mismatches,
+                )
+                if repeats:
+                    results.extend(repeats)
+                    hits_found = True
+            if not hits_found:
+                no_hits.append(rec_id)
+    except InvalidFASTAError as e:
+        print(f'InvalidFASTAError: {e.message}', file=sys.stderr)
+        if e.details:
+            print(f'Details: {e.details}', file=sys.stderr)
+        return e.exit_code
+    except Exception as e:
+        print(f'An unexpected error ocurred: {e}', file=sys.stderr)
+        return 255
     if results:
         df = pd.DataFrame(results)
-    else:
-        df = pd.DataFrame(columns=list(RepeatHit.__dataclass_fields__.keys()))  # empty results
-    df.to_csv(sys.stdout if output_filepath is None else output_filepath, index=False)
+        df.to_csv(sys.stdout if output_filepath is None else output_filepath, index=False)
+    # else:
+        # df = pd.DataFrame(columns=list(RepeatHit.__dataclass_fields__.keys()))  # empty results
+    #df.to_csv(sys.stdout if output_filepath is None else output_filepath, index=False)
+    if no_hits:
+        print('\nNo repeats were found in the following sequences:')
+        for item in no_hits:
+            print(f' {item}')
     return 0
 
 if __name__ == "__main__":
