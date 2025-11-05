@@ -85,7 +85,7 @@ def main(argv: str | None = None) -> int:
             print(f'Details: {e.details}', file=sys.stderr)
         return e.exit_code
     except Exception as e:
-        print(f'An unexpected error ocurred: {e}', file=sys.stderr)
+        print(f'An unexpected error occurred: {e}', file=sys.stderr)
         return 255
     if results:
         df = pd.DataFrame(results)
