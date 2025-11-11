@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Added detection of inverted repeats
 - Added option to choose to look for direct-only or inverted-only repeats
 - Added faster repeat search algorithm "2-bit" by encoding k-mers as 2*k bits and doing bitwise comparisons (AI-assisted!)
+- Added sequence validation/checking function and some error handling of exceptions
 
 ## [0.2.0] - 2025-10-27
 - fix: arguments/flags cleaned up a bit. -o / --output flag added for output directory; omitting means output results to stdout. Replaced -l with -k for consistency (k-mer length)
