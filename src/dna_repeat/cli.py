@@ -5,9 +5,9 @@ import sys
 import argparse
 # import csv
 from dna_repeat import __version__
-from dna_repeat.core import iter_fasta, RepeatHit
+from dna_repeat.core import iter_fasta, RepeatHit, clean_and_check
 from dna_repeat.ai import find_repeats_2bit, find_invert_repeats_2bit
-from dna_repeat.error import InvalidFASTAError
+from dna_repeat.error import InvalidFASTAError, EmptySequence, InvalidSequence, InvalidKmer
 from pathlib import Path
 import pandas as pd
 
@@ -52,33 +52,46 @@ def main(argv: str | None = None) -> int:
         return 1       
 
     results = []
+    errors: list[str] = []
     no_hits: list[str] = []
     
     try:
         for rec_id, seq in iter_fasta(input_filepath):
-            hits_found = False
-            if do_direct:
-                repeats: list[RepeatHit] = find_repeats_2bit(
-                    rec_id=rec_id,
-                    seq=seq,
-                    kmer_length=kmer_length,
-                    allowed_mismatches=allowed_mismatches,
-                )
-                if repeats:
-                    results.extend(repeats)
-                    hits_found = True
-            if do_inverted:
-                repeats: list[RepeatHit] = find_invert_repeats_2bit(
-                    rec_id=rec_id,
-                    seq=seq,
-                    kmer_length=kmer_length,
-                    allowed_mismatches=allowed_mismatches,
-                )
-                if repeats:
-                    results.extend(repeats)
-                    hits_found = True
-            if not hits_found:
-                no_hits.append(rec_id)
+            try:
+                rec_id, seq = clean_and_check(rec_id, seq, kmer_length)
+                hits_found = False
+                if do_direct:
+                    repeats: list[RepeatHit] = find_repeats_2bit(
+                        rec_id=rec_id,
+                        seq=seq,
+                        kmer_length=kmer_length,
+                        allowed_mismatches=allowed_mismatches,
+                    )
+                    if repeats:
+                        results.extend(repeats)
+                        hits_found = True
+                if do_inverted:
+                    repeats: list[RepeatHit] = find_invert_repeats_2bit(
+                        rec_id=rec_id,
+                        seq=seq,
+                        kmer_length=kmer_length,
+                        allowed_mismatches=allowed_mismatches,
+                    )
+                    if repeats:
+                        results.extend(repeats)
+                        hits_found = True
+                if not hits_found:
+                    no_hits.append(rec_id)
+            except EmptySequence as e:
+                errors.append(f'{e}')
+                continue
+            except InvalidSequence as e:
+                errors.append(f'{e}')
+                continue
+            except InvalidKmer as e:
+                errors.append(f'{e}')
+                continue
+
     except InvalidFASTAError as e:
         print(f'InvalidFASTAError: {e.message}', file=sys.stderr)
         if e.details:
@@ -96,6 +109,10 @@ def main(argv: str | None = None) -> int:
     if no_hits:
         print('\nNo repeats were found in the following sequences:')
         for item in no_hits:
+            print(f' {item}')
+    if errors:
+        print('\nThe following sequences returned errors:')
+        for item in errors:
             print(f' {item}')
     return 0
 
