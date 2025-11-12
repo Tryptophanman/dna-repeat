@@ -98,15 +98,15 @@ def reverse_complement(s: str) -> str:
     return s.translate(COMPLEMENT)[::-1]
 
 def clean_and_check(rec_id: str, seq: str, kmer_length: int) -> tuple[str, str]:
-    clean_seq = re.sub(r'[^A-Z]', '', seq).upper()          # Remove non-alphas and spaces. Make uppercase.
+    clean_seq = re.sub(r'[^A-Z]', '', seq.upper())          # Remove non-alphas and spaces. Make uppercase.
+    if clean_seq == '':                                     # Check that there's a sequence
+        raise EmptySequence(rec_id)
     if kmer_length > len(clean_seq):                        # Check that k-mer lengh isn't longer than the query sequence
         raise InvalidKmer(rec_id)
     if rec_id == '':                                        # Handle no-name seqs, not a deal breaker
         clean_rec_id = f'No-name sequence ({len(clean_seq)} bp)'
     else:
         clean_rec_id = rec_id
-    if clean_seq == '':                                     # Check that there's a sequence
-        raise EmptySequence(rec_id)
     invalid_chars = []
     for match in re.finditer(r'[^ACGT]', clean_seq):        # Check for invalid characters e.g. wobble bases, etc.
         char = match.group(0)
