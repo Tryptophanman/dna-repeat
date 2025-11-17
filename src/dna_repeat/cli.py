@@ -7,7 +7,12 @@ import argparse
 from dna_repeat import __version__
 from dna_repeat.core import iter_fasta, RepeatHit, clean_and_check
 from dna_repeat.ai import find_repeats_2bit, find_invert_repeats_2bit
-from dna_repeat.error import InvalidFASTAError, EmptySequence, InvalidSequence, InvalidKmer
+from dna_repeat.error import (
+    InvalidFASTAError,
+    EmptySequenceError,
+    InvalidSequenceError,
+    InvalidKmerError,
+)
 from pathlib import Path
 import pandas as pd
 
@@ -82,13 +87,13 @@ def main(argv: str | None = None) -> int:
                         hits_found = True
                 if not hits_found:
                     no_hits.append(rec_id)
-            except EmptySequence as e:
+            except EmptySequenceError as e:
                 errors.append(f'{e}')
                 continue
-            except InvalidSequence as e:
+            except InvalidSequenceError as e:
                 errors.append(f'{e}')
                 continue
-            except InvalidKmer as e:
+            except InvalidKmerError as e:
                 errors.append(f'{e}')
                 continue
 

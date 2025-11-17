@@ -1,5 +1,5 @@
 from dna_repeat.core import clean_and_check
-from dna_repeat.error import EmptySequence, InvalidKmer, InvalidSequence
+from dna_repeat.error import EmptySequenceError, InvalidKmerError, InvalidSequenceError
 import pytest
 
 test_dict = {
@@ -35,14 +35,14 @@ def test_some_spaces():
 # RAISED
 def test_empty_Sequence_error():
 # Error -> empty sequence
-    with pytest.raises(EmptySequence):
+    with pytest.raises(EmptySequenceError):
         cleaned_id, cleaned_seq = clean_and_check('empty', test_dict['seq_empty'], kmer_length)
 
 def test_invalid_chars_error():
-    with pytest.raises(InvalidSequence):
+    with pytest.raises(InvalidSequenceError):
         cleaned_id, cleaned_seq = clean_and_check('invalid_chars', test_dict['seq_invalid_chars'], kmer_length)
         cleaned_id, cleaned_seq = clean_and_check('protein', test_dict['seq_protein'], kmer_length)
 
 def test_invalid_kmer():
-    with pytest.raises(InvalidKmer):
+    with pytest.raises(InvalidKmerError):
         cleaned_id, cleaned_seq = clean_and_check('short', test_dict['seq_short'], kmer_length)

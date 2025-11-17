@@ -6,7 +6,12 @@ from pathlib import Path
 from typing import Iterator
 from dataclasses import dataclass
 from dna_repeat.constants import COMPLEMENT
-from dna_repeat.error import InvalidFASTAError, EmptySequence, InvalidSequence, InvalidKmer
+from dna_repeat.error import (
+    InvalidFASTAError,
+    EmptySequenceError,
+    InvalidSequenceError,
+    InvalidKmerError,
+)
 import re
 
 @dataclass
@@ -100,9 +105,9 @@ def reverse_complement(s: str) -> str:
 def clean_and_check(rec_id: str, seq: str, kmer_length: int) -> tuple[str, str]:
     clean_seq = re.sub(r'[^A-Z]', '', seq.upper())          # Remove non-alphas and spaces. Make uppercase.
     if clean_seq == '':                                     # Check that there's a sequence
-        raise EmptySequence(rec_id)
+        raise EmptySequenceError(rec_id)
     if kmer_length > len(clean_seq):                        # Check that k-mer lengh isn't longer than the query sequence
-        raise InvalidKmer(rec_id)
+        raise InvalidKmerError(rec_id)
     if rec_id == '':                                        # Handle no-name seqs, not a deal breaker
         clean_rec_id = f'No-name sequence ({len(clean_seq)} bp)'
     else:
@@ -113,5 +118,5 @@ def clean_and_check(rec_id: str, seq: str, kmer_length: int) -> tuple[str, str]:
         pos = match.start() + 1                             # The position of the base is the start position plus one character
         invalid_chars.append(f"'{char}' at pos. {pos}")
     if invalid_chars:
-        raise InvalidSequence(rec_id, invalid_chars)
+        raise InvalidSequenceError(rec_id, invalid_chars)
     return clean_rec_id, clean_seq 
