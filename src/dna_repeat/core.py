@@ -28,27 +28,28 @@ class RepeatHit:
     kmer_length: int
     orientation: str
 
-def iter_fasta(input_filepath: Path) -> Iterator[tuple[str, str]]:
-    '''Generator that yields (record ID, sequence) tuples from a FASTA file'''
-    records = SeqIO.parse(handle=input_filepath, format='fasta')
-
-    try:
-        first_record = next(records)
-    except StopIteration:
+def count_fasta_seqs(input_filepath: Path) -> int:
+    '''Counts the number of seqs in a fasta file'''
+    number_of_seqs = len(list(SeqIO.parse(handle=input_filepath, format='fasta')))
+    if number_of_seqs == 0:
         raise InvalidFASTAError(
             message=f"FASTA file {input_filepath} contains no records and/or is not formatted correctly.",
             details="StopIteration exception in core.py: iter_fasta()",
         )
-    yield first_record.id, str(first_record.seq)
+    return number_of_seqs
+
+def iter_fasta(input_filepath: Path) -> Iterator[tuple[str, str]]:
+    '''Generator that yields (record ID, sequence) tuples from a FASTA file'''
+    records = SeqIO.parse(handle=input_filepath, format='fasta')
     for rec in records:
         yield rec.id, str(rec.seq)
 
 def hamming_distance(a: str, b: str) -> int:
-    '''Returns the hamming distance for two strings'''
+    '''[DEPRECATED FOR BITWISE SEARCH] Returns the hamming distance for two strings'''
     return sum(c1 != c2 for c1, c2 in zip(a, b))
 
 def find_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: int) -> list[RepeatHit]:
-    '''Find direct repeats by string slicing and nested loop'''
+    '''[DEPRECATED FOR BITWISE SEARCH] Find direct repeats by string slicing and nested loop'''
     if len(seq) < kmer_length:
         return []
     hits: list[RepeatHit] = []
@@ -73,7 +74,7 @@ def find_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: in
     return hits
 
 def find_invert_repeats(rec_id: str, seq: str, kmer_length: int, allowed_mismatches: int) -> list[RepeatHit]:
-    '''Find indirect repeats by string slicing and nested loop'''
+    '''[DEPRECATED FOR BITWISE SEARCH] Find indirect repeats by string slicing and nested loop'''
     if len(seq) < kmer_length:
         return []
     seq_rc = reverse_complement(seq)
@@ -103,6 +104,7 @@ def reverse_complement(s: str) -> str:
     return s.translate(COMPLEMENT)[::-1]
 
 def clean_and_check(rec_id: str, seq: str, kmer_length: int) -> tuple[str, str]:
+    '''Clean sequence of non-letters, make uppercase, and check for empty sequence, invalid sequence, and K-mer length < length of sequence'''
     clean_seq = re.sub(r'[^A-Z]', '', seq.upper())          # Remove non-alphas and spaces. Make uppercase.
     if clean_seq == '':                                     # Check that there's a sequence
         raise EmptySequenceError(rec_id)
