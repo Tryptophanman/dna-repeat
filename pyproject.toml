@@ -1,6 +1,6 @@
 [project]
 name = "dna-repeat"
-version = "0.2.0"
+version = "1.0.0"
 description = "CLI app that finds repeats in a DNA sequence"
 readme = "README.md"
 requires-python = ">=3.12"

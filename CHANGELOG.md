@@ -4,8 +4,7 @@ See also: [README.md](README.md)
 
 All notable changes to this project will be documented in this file.
 
-
-## [Unreleased]
+## [1.0.0] - 2025-11-18
 - A number of fields (columns) have been added to the results:
   - record_id: name of the sequence
   - query_start: start position of the first repeat
@@ -35,5 +34,3 @@ All notable changes to this project will be documented in this file.
 
 - Known limitations:
   - $O(n^2)$ time complexity; slow for large inputs
-  - Inverted repeats not detected
-  - Outputs k-mer strings but not positions
